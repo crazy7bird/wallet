@@ -7,18 +7,11 @@
 * @brief : defines the dictionary system used in the program.
 */
 
-#include<stint.h>
+int dictionary_add_token(char * new_token);
+int dictionary_get_ID(char * token_id);
+char * dictionary_get_token(int id);
+void dictionary_print();
+int dictionary_init();
+int dictionary_deinit();
 
-/*
-*
-*/
-typedef struct st_dictionary st_dictionary;
-struct st_dictionary {
- int size;
- char ** token;
-}
-
-
-
-
-#endif /* #ifndef _DICTIONARY_H_*
+#endif /* #ifndef _DICTIONARY_H_*/
