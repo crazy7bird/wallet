@@ -101,11 +101,25 @@ int dictionary_save(char * path){
   }
   fclose(f_bkp);
   fclose(f_n);
+  //int remove(f_bkp);
+  return 0;
+}
+
+int dictionary_load(char * path){
+  FILE * f = fopen(path,"rb");
+  char LINE[100];
+  do{
+    fgets(LINE, 100, f);
+    LINE[strlen(LINE) - 1u] = '\0'; //replace \n by \0 
+    if(strlen(LINE) == 0) break;
+    dictionary_add_token(LINE);
+  }while(!feof(f));
   return 0;
 }
 
 int main(void){
   dictionary_init();
+  /*
   dictionary_add_token("halala");
   dictionary_add_token("hilili");
   dictionary_add_token("hoilili");
@@ -117,6 +131,9 @@ int main(void){
   printf("dgi - fault : %d\n", dictionary_get_ID("hama"));
   dictionary_print();
   dictionary_save("data.bin");
+  */
+  dictionary_load("data.bin");
+  dictionary_print();
   dictionary_deinit();
-  //main for test purpose.
+
 }

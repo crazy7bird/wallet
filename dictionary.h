@@ -13,5 +13,7 @@ char * dictionary_get_token(int id);
 void dictionary_print();
 int dictionary_init();
 int dictionary_deinit();
+int dictionary_save(char * path);
+int dictionary_load(char * path);
 
 #endif /* #ifndef _DICTIONARY_H_*/
