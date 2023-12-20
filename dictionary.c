@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 typedef struct st_dictionary st_dictionary;
 struct st_dictionary {
@@ -9,6 +10,31 @@ struct st_dictionary {
  char ** token;
 };
 st_dictionary gl_dic;
+
+long int file_position = 0;
+
+static long int file_separator_set(char * path){
+  FILE * f = fopen(path, "rb");
+  char t1 = '\0';
+  char t2 = '\0';
+  t2 = fgetc(f);
+  while(!feof(f)){
+    t1 = t2;
+    t2 = fgetc(f);
+    if(t1 == '\n' && t2 == '\n') break;
+  }
+  // @todo : test error return from fgetpos;
+  file_position = ftell(f);
+  return file_position;
+}
+
+void file_separator_init(char * path){
+  if(file_position == 0) file_separator_set(path);
+}
+
+long int file_separator_get(void){
+  return file_position;
+}
 
 int dictionary_add_token(char * new_token){
   if(dictionary_get_ID(new_token) != -1){
@@ -94,6 +120,7 @@ int dictionary_save(char * path){
      t2 = fgetc(f_bkp);
      if(t1 == '\n' && t2 == '\n') break;
   }
+
   while(!feof(f_bkp)){
     char c = fgetc(f_bkp);
     if(feof(f_bkp))break;
@@ -133,6 +160,7 @@ int main(void){
   dictionary_save("data.bin");
   */
   dictionary_load("data.bin");
+  printf("%ld\n",file_separator_set("data.bin"));
   dictionary_print();
   dictionary_deinit();
 
