@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "dictionary.h"
+#include "transaction.h"
 
-
+/*
 typedef struct st_transaction st_transaction;
 struct st_transaction{
     time_t timestamp;
@@ -12,9 +13,9 @@ struct st_transaction{
     double token;
     double fiat;
 };
+*/
 int gl_size; // number of trans.
 st_transaction *gl_trans;
-
 
 /** this function should not exits*/
 int transaction_add(time_t time, uint8_t token_id, double token, double fiat){
@@ -45,6 +46,7 @@ int transaction_read(int number, int pos, char* path){
   long int s_pos = file_separator_get();
   FILE * f = fopen(path, "ab");
   fseek(f, s_pos, SEEK_SET);
+  //fread()
 
   return 0;
 }
@@ -69,6 +71,7 @@ int transaction_init(){
     return 0;
 }
 
+/*
 //main for test purpose.
 int main(void){
   file_separator_init("data.bin");
@@ -76,4 +79,4 @@ int main(void){
   transaction_add(time(NULL), 1, 100, 10);
   transaction_add(time(NULL), 1, 100, 8);
   transactions_print();
-}
+}*/

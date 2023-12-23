@@ -143,10 +143,10 @@ int dictionary_load(char * path){
   }while(!feof(f));
   return 0;
 }
-
+/*
 int main(void){
   dictionary_init();
-  /*
+  
   dictionary_add_token("halala");
   dictionary_add_token("hilili");
   dictionary_add_token("hoilili");
@@ -158,10 +158,11 @@ int main(void){
   printf("dgi - fault : %d\n", dictionary_get_ID("hama"));
   dictionary_print();
   dictionary_save("data.bin");
-  */
+  
   dictionary_load("data.bin");
   printf("%ld\n",file_separator_set("data.bin"));
   dictionary_print();
   dictionary_deinit();
 
 }
+*/
