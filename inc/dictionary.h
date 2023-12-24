@@ -8,8 +8,16 @@
 */
 
 /* file separator system */
+/* The file separator is the limit,
+*  between dictionary part and 
+*  transaction part into a file.
+*/
+/* set the global var of the separator file.*/
 void file_separator_init(char * path);
+/* get the separator.*/
 long int file_separator_get(void);
+
+
 
 int dictionary_add_token(char * new_token);
 int dictionary_get_ID(char * token_id);
