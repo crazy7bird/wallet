@@ -10,6 +10,7 @@ project (wallet)
 set(SOURCES
     src/dictionary.c
     src/transactions.c
+    src/gecko_api.c
     main.c
 )
 
@@ -22,3 +23,8 @@ target_include_directories(wallet
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/inc
 )
+
+# CURL
+find_package(CURL REQUIRED) 
+include_directories(${CURL_INCLUDE_DIR})
+target_link_libraries(wallet ${CURL_LIBRARIES})
