@@ -4,38 +4,56 @@
 #include <string.h>
 #include <stdbool.h>
 
+// Temporary defineds :
+#define FILE_NAME "data/wallet.dic"
+
 typedef struct st_dictionary st_dictionary;
 struct st_dictionary {
  int size;
- char ** token;
+ st_token * entry;
 };
 st_dictionary gl_dic;
 
-long int file_position = 0;
+static int dictionary_file_append(st_token * new_token){
+  // @todo : get name from a file system manager.
+  FILE * f = fopen(FILE_NAME, "ab");
+  
+  fwrite(new_token->token_id, strlen(new_token->token_id) * sizeof(char), 1, f);
+  fwrite("\n", sizeof(char), 1, f);
 
-static long int file_separator_set(char * path){
-  FILE * f = fopen(path, "rb");
-  char t1 = '\0';
-  char t2 = '\0';
-  t2 = fgetc(f);
-  while(!feof(f)){
-    t1 = t2;
-    t2 = fgetc(f);
-    if(t1 == '\n' && t2 == '\n') break;
-  }
-  // @todo : test error return from fgetpos;
-  file_position = ftell(f);
-  return file_position;
+  fwrite(new_token->token_symbol, strlen(new_token->token_symbol) * sizeof(char), 1, f);
+  fwrite("\n", sizeof(char), 1, f);
+
+  fwrite(new_token->token_name, strlen(new_token->token_name) * sizeof(char), 1, f);
+  fwrite("\n", sizeof(char), 1, f);
+
+  fclose(f);
+  return 0;
 }
 
-void file_separator_init(char * path){
-  if(file_position == 0) file_separator_set(path);
+int dictionary_add_token(st_token * new_token){
+  // Check if tocken isn’t in the dictionary.
+  /*
+  if(dictionary_get_ID(new_token) != -1){
+    printf("dictionary_add_token : error token already in dictionary");
+    return -1;
+  }*/
+  // @todo : adding coingecko api check.
+  gl_dic.entry = realloc(gl_dic.entry,sizeof(st_token)*(gl_dic.size + 1));
+  gl_dic.entry[gl_dic.size].token_id = malloc((strlen(new_token->token_id) + 1)*sizeof(char));
+  strcpy(gl_dic.entry[gl_dic.size].token_id, new_token->token_id);
+  gl_dic.entry[gl_dic.size].token_symbol = malloc((strlen(new_token->token_symbol) + 1)*sizeof(char));
+  strcpy(gl_dic.entry[gl_dic.size].token_symbol, new_token->token_symbol);
+  gl_dic.entry[gl_dic.size].token_name = malloc((strlen(new_token->token_name) + 1)*sizeof(char));
+  strcpy(gl_dic.entry[gl_dic.size].token_name, new_token->token_name);
+  gl_dic.size++;
+
+  dictionary_file_append(new_token);
+
+  return 0;
 }
 
-long int file_separator_get(void){
-  return file_position;
-}
-
+/*
 int dictionary_add_token(char * new_token){
   if(dictionary_get_ID(new_token) != -1){
      printf("dictionary_add_token : error token already exist\n");
@@ -143,7 +161,7 @@ int dictionary_load(char * path){
   }while(!feof(f));
   return 0;
 }
-/*
+
 int main(void){
   dictionary_init();
   

@@ -55,7 +55,7 @@ Le module dictionnaire doit :
 Ce module est le lien entre les données locales et les valeurs sur internet.
 Il doit permettre :
   - La mise à jours des prix d’un dictionnaire.
-  - La recherche / validation de nouveau token.
+  - La recherche / validation de nouveaux tokens.
 
 
 #### main v1.0 

@@ -21,7 +21,7 @@ int transaction_save(st_transaction trans, char * path){
 
 void transaction_read_all(char* path){
   st_transaction trans;
-  long int s_pos = file_separator_get();
+  long int s_pos = 9;
   FILE * f = fopen(path, "rb");
   fseek(f, s_pos, SEEK_SET);
   while(!feof(f)){
