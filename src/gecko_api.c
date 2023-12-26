@@ -41,7 +41,7 @@ char* make_url(int token_num, char **token_list){
   char * finalUrl = 0;
   char * finalUrl_tail = 0;
   size_t finalSize;
-  const char * url_b = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&ids=";
+  const char * url_b = "https://api.coingecko.com/api/v3/simple/price?vs_currencies=eur&ids=";
   const char * link = "%2C";
   finalSize = strlen(url_b);
   finalSize += token_num * strlen(link);
@@ -100,7 +100,8 @@ int ask_url(char* url, struct memory* ret_data)
 */
 int regex_token (char* source, int num_token, struct token_api * t_list)
 {
-  char * regexString =  "\"id\":\"([^\"]*)\"[^}]*current_price\".([^,]*)";
+  //char * regexString =  "\"id\":\"([^\"]*)\"[^}]*current_price\".([^,]*)";
+  char * regexString = "\"([^\"]*)\":[^:]*:([^}]*)}";
   size_t maxGroups = 3*num_token;
   
   regex_t regexCompiled;
