@@ -20,11 +20,18 @@ struct st_token{
     double value;
 };
 
+typedef struct st_dictionary st_dictionary;
+struct st_dictionary {
+ int size;
+ st_token * entry;
+};
+
 
 int dictionary_add_token(st_token * new_token);
 int dictionary_get_ID(char * token);
 int dictionary_load();
 void dictionary_print();
+void dictionary_price_update();
 
 
 #endif /* #ifndef _DICTIONARY_H_*/

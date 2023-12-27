@@ -5,6 +5,8 @@
 #include <regex.h>    /* data treatment */
 #include "gecko_api.h"
 
+
+
 /* Used for calback on http.get response */ 
 struct memory {
   char *response;
@@ -182,4 +184,65 @@ int gecko_api(int argc, char **argv)
   print_token_list(token_list);
   free_token(token_list);
   return 0;
+}
+/*************************************************************************************************************/
+int regex_token_dic (char* source, st_dictionary * dictionary)
+{
+  //char * regexString =  "\"id\":\"([^\"]*)\"[^}]*current_price\".([^,]*)";
+  char * regexString = "\"([^\"]*)\":[^:]*:([^}]*)}";
+  size_t maxGroups = 3*dictionary->size;
+  
+  regex_t regexCompiled;
+  regmatch_t groupArray[maxGroups];
+  char * cursor;
+
+ if( 0!= regcomp(&regexCompiled, regexString, REG_EXTENDED))return 1;
+
+  cursor = source;
+  int t_index = 0;
+  while ( regexec(&regexCompiled, cursor, maxGroups, groupArray, 0) == 0)
+    {
+      char buffer[DICT_MAX_CHAR] = {0};
+      // the second element is the number.
+      //t_list[t_index].name  = malloc((size_t) (groupArray[1].rm_eo - groupArray[1].rm_so) * sizeof(char)); 
+      strncpy(buffer, &cursor[groupArray[1].rm_so],(size_t) (groupArray[1].rm_eo - groupArray[1].rm_so) );
+      dictionary->entry[dictionary_get_ID(buffer)].value = strtod(&cursor[groupArray[2].rm_so],NULL);
+      //t_list[t_index].price = strtod(&cursor[groupArray[2].rm_so],NULL);
+
+      cursor += groupArray[0].rm_eo;
+      t_index ++;
+    }
+
+  regfree(&regexCompiled);
+  return 0;
+}
+/* @end : regex_token*/
+
+char* generate_url(st_dictionary * dictionnary){
+  char * finalUrl = 0;
+  char * finalUrl_tail = 0;
+  size_t finalSize;
+  const char * url_b = "https://api.coingecko.com/api/v3/simple/price?vs_currencies=eur&ids=";
+  const char * link = "%2C";
+  finalSize = strlen(url_b);
+  finalSize += dictionnary->size * strlen(link);
+  for(int i = 0; i < dictionnary->size; i++){
+    finalSize += strlen(dictionnary->entry[i].token_id); 
+  } 
+  finalSize ++; /* \0 */
+  finalUrl = (char *) malloc(finalSize * sizeof(char)); 
+  finalUrl_tail = strcpy(finalUrl, url_b);
+  
+  for(int i = 0; i < dictionnary->size; i++){
+    finalUrl_tail = strcat(finalUrl_tail, dictionnary->entry[i].token_id);
+    finalUrl_tail = strcat(finalUrl_tail, link);
+  }
+ return finalUrl;
+  
+}
+int price_update(st_dictionary * dictionary){
+    struct memory resp = {0};
+    char * url = generate_url(dictionary);
+    ask_url(url, &resp);
+    regex_token_dic(resp.response, dictionary);
 }

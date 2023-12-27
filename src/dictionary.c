@@ -3,15 +3,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include "gecko_api.h"
 
 // Temporary defineds :
 #define FILE_NAME "data/wallet.dic"
 
-typedef struct st_dictionary st_dictionary;
-struct st_dictionary {
- int size;
- st_token * entry;
-};
+
 st_dictionary gl_dic;
 
 static int dictionary_file_append(st_token * new_token){
@@ -101,11 +98,16 @@ int dictionary_load(){
 
 void dictionary_print(){
   for(int i = 0; i < gl_dic.size ; i++ ){
-    printf("ID : %d; Token : %s; %s; %s\n",i,
+    printf("ID : %d; Token : %s; %s; %s = %lf\n",i,
     gl_dic.entry[i].token_id,
     gl_dic.entry[i].token_symbol,
-    gl_dic.entry[i].token_name);
+    gl_dic.entry[i].token_name,
+    gl_dic.entry[i].value);
   }
+}
+
+void dictionary_price_update(){
+  price_update(&gl_dic);
 }
 
 /*

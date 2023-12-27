@@ -46,10 +46,10 @@ Au démmarage du programme toutes les entrées sont chargé en mémoire.
 Chaque nouveau token, est sauvegardé dans le fichier.
 
 Le module dictionnaire doit :
- - Permettre l’ajout d’un token.
- - Valider l’ajout d’un token (avec validation de l’api coingecko).
- - Fournir à partire d’un ID_Key, le token.
- - Mise à jours en dircte du prix.
+ - ✓ Permettre l’ajout d’un token.
+ -   Valider l’ajout d’un token (avec validation de l’api coingecko).
+ -   Fournir à partire d’un ID_Key, le token.
+ -   Mise à jours en directe du prix.
 
 #### coingecko api 
 Ce module est le lien entre les données locales et les valeurs sur internet.
