@@ -49,12 +49,12 @@ Le module dictionnaire doit :
  - ✓ Permettre l’ajout d’un token.
  -   Valider l’ajout d’un token (avec validation de l’api coingecko).
  -   Fournir à partire d’un ID_Key, le token.
- -   Mise à jours en directe du prix.
+ - ✓ Mise à jours en directe du prix.
 
 #### coingecko api 
 Ce module est le lien entre les données locales et les valeurs sur internet.
 Il doit permettre :
-  - La mise à jours des prix d’un dictionnaire.
+  - ✓ La mise à jours des prix d’un dictionnaire.
   - La recherche / validation de nouveaux tokens.
 
 
