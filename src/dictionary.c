@@ -31,13 +31,9 @@ static int dictionary_file_append(st_token * new_token){
   return 0;
 }
 
-int dictionary_add_token(st_token * new_token){
+static int dictionary_load_token(st_token * new_token){
   // Check if tocken isn’t in the dictionary.
 
-  if(dictionary_get_ID(new_token->token_id) != -1){
-    printf("dictionary_add_token : error token already in dictionary\n");
-    return -1;
-  }
   // @todo : adding coingecko api check.
   gl_dic.entry = realloc(gl_dic.entry,sizeof(st_token)*(gl_dic.size + 1));
   gl_dic.entry[gl_dic.size].token_id = malloc((strlen(new_token->token_id) + 1)*sizeof(char));
@@ -48,8 +44,17 @@ int dictionary_add_token(st_token * new_token){
   strcpy(gl_dic.entry[gl_dic.size].token_name, new_token->token_name);
   gl_dic.size++;
 
-  dictionary_file_append(new_token);
+  return 0;
+}
 
+int dictionary_add_token(st_token * new_token){
+  // Check if tocken isn’t in the dictionary.
+  if(dictionary_get_ID(new_token->token_id) != -1){
+    printf("dictionary_add_token : error token already in dictionary\n");
+    return -1;
+  }
+  dictionary_load_token(new_token);
+  dictionary_file_append(new_token);
   return 0;
 }
 
@@ -68,32 +73,28 @@ static void clearLine(char *LINE){
 
 int dictionary_load(){
   FILE * f = fopen(FILE_NAME,"rb");
-  char LINE[DICT_MAX_CHAR];
   char t_id[DICT_MAX_CHAR];
   char t_symbol[DICT_MAX_CHAR];
   char t_name[DICT_MAX_CHAR];
   st_token l_token = {t_id, t_symbol, t_name, 0};
   do{
     // Get token ID
-    clearLine(LINE);
-    fgets(LINE, DICT_MAX_CHAR, f);
-    if(strlen(LINE)<1) break;
-    LINE[strlen(LINE) - 1u] = '\0'; //replace \n by \0 
-    strcpy(t_id, LINE);
+    clearLine(t_id);
+    fgets(t_id, DICT_MAX_CHAR, f);
+    if(strlen(t_id)<1) break;
+    t_id[strlen(t_id) - 1u] = '\0'; //replace \n by \0
 
     //Get token symbol
-    clearLine(LINE);
-    fgets(LINE, DICT_MAX_CHAR, f);
-    LINE[strlen(LINE) - 1u] = '\0'; //replace \n by \0 
-    strcpy(t_symbol, LINE);
+    clearLine(t_symbol);
+    fgets(t_symbol, DICT_MAX_CHAR, f);
+    t_symbol[strlen(t_symbol) - 1u] = '\0'; //replace \n by \0
 
     //Get token name
-    clearLine(LINE);
-    fgets(LINE, DICT_MAX_CHAR, f);
-    LINE[strlen(LINE) - 1u] = '\0'; //replace \n by \0 
-    strcpy(t_name, LINE);
+    clearLine(t_name);
+    fgets(t_name, DICT_MAX_CHAR, f);
+    t_name[strlen(t_name) - 1u] = '\0'; //replace \n by \0
 
-    dictionary_add_token(&l_token);
+    dictionary_load_token(&l_token);
   }while(!feof(f));
   return 0;
 }
