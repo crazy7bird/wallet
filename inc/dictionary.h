@@ -9,6 +9,8 @@
 
 #include<stdint.h>
 
+#define DICT_MAX_CHAR 50u
+
 typedef struct st_token st_token;
 struct st_token{
     // uint8_t ID_Key; This ID is determined by it’s position in the dictionary.
@@ -20,6 +22,9 @@ struct st_token{
 
 
 int dictionary_add_token(st_token * new_token);
+int dictionary_get_ID(char * token);
+int dictionary_load();
+void dictionary_print();
 
 
 #endif /* #ifndef _DICTIONARY_H_*/

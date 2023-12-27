@@ -33,11 +33,11 @@ static int dictionary_file_append(st_token * new_token){
 
 int dictionary_add_token(st_token * new_token){
   // Check if tocken isn’t in the dictionary.
-  /*
-  if(dictionary_get_ID(new_token) != -1){
-    printf("dictionary_add_token : error token already in dictionary");
+
+  if(dictionary_get_ID(new_token->token_id) != -1){
+    printf("dictionary_add_token : error token already in dictionary\n");
     return -1;
-  }*/
+  }
   // @todo : adding coingecko api check.
   gl_dic.entry = realloc(gl_dic.entry,sizeof(st_token)*(gl_dic.size + 1));
   gl_dic.entry[gl_dic.size].token_id = malloc((strlen(new_token->token_id) + 1)*sizeof(char));
@@ -53,19 +53,61 @@ int dictionary_add_token(st_token * new_token){
   return 0;
 }
 
-/*
-int dictionary_add_token(char * new_token){
-  if(dictionary_get_ID(new_token) != -1){
-     printf("dictionary_add_token : error token already exist\n");
-     return -1;
+int dictionary_get_ID(char * token){
+  for(int i = 0u ; i < gl_dic.size ; i++){
+    if(strcmp(token, gl_dic.entry[i].token_id) == 0u ||
+       strcmp(token, gl_dic.entry[i].token_symbol) == 0u ||
+       strcmp(token, gl_dic.entry[i].token_name) == 0u ) return (int)i;
   }
-  gl_dic.token = realloc(gl_dic.token,gl_dic.size + 1);
-  gl_dic.token[gl_dic.size] = malloc((strlen(new_token) + 1)*sizeof(char));
-  strcpy(gl_dic.token[gl_dic.size], new_token);
-  gl_dic.size++;
+  return -1;
+}
+
+static void clearLine(char *LINE){
+  for(int i =0; i<DICT_MAX_CHAR; i++)LINE[i] = '\0';
+}
+
+int dictionary_load(){
+  FILE * f = fopen(FILE_NAME,"rb");
+  char LINE[DICT_MAX_CHAR];
+  char t_id[DICT_MAX_CHAR];
+  char t_symbol[DICT_MAX_CHAR];
+  char t_name[DICT_MAX_CHAR];
+  st_token l_token = {t_id, t_symbol, t_name, 0};
+  do{
+    // Get token ID
+    clearLine(LINE);
+    fgets(LINE, DICT_MAX_CHAR, f);
+    if(strlen(LINE)<1) break;
+    LINE[strlen(LINE) - 1u] = '\0'; //replace \n by \0 
+    strcpy(t_id, LINE);
+
+    //Get token symbol
+    clearLine(LINE);
+    fgets(LINE, DICT_MAX_CHAR, f);
+    LINE[strlen(LINE) - 1u] = '\0'; //replace \n by \0 
+    strcpy(t_symbol, LINE);
+
+    //Get token name
+    clearLine(LINE);
+    fgets(LINE, DICT_MAX_CHAR, f);
+    LINE[strlen(LINE) - 1u] = '\0'; //replace \n by \0 
+    strcpy(t_name, LINE);
+
+    dictionary_add_token(&l_token);
+  }while(!feof(f));
   return 0;
 }
 
+void dictionary_print(){
+  for(int i = 0; i < gl_dic.size ; i++ ){
+    printf("ID : %d; Token : %s; %s; %s\n",i,
+    gl_dic.entry[i].token_id,
+    gl_dic.entry[i].token_symbol,
+    gl_dic.entry[i].token_name);
+  }
+}
+
+/*
 int dictionary_get_ID(char * token_id){
   for(int i = 0u ; i < gl_dic.size ; i++){
     if(strcmp(token_id, gl_dic.token[i]) == 0u) return (int)i;
@@ -104,49 +146,6 @@ int dictionary_deinit(){
     free(gl_dic.token[i]);
   }
   free(gl_dic.token);
-  return 0;
-}
-
-int dictionary_save(char * path){
-  // Path size check used for bkp.
-  if(strlen(path)>=95){
-    printf("dictionary_save : error path too long");
-    return -1;
-  }
-  // Saving old file as backup.
-  char bkp_path[100];
-  bkp_path[0]= '~';
-  strcpy(&bkp_path[1], path);
-  strcat(bkp_path,".bkp");
-  rename(path, bkp_path);
-
-  FILE * f_n = fopen(path,"wb");
-  FILE * f_bkp = fopen(bkp_path, "rb");
-
-  // writing header that is the token list.
-  for(int i =0; i< gl_dic.size; i++){
-    fwrite(gl_dic.token[i], strlen(gl_dic.token[i]) * sizeof(char), 1, f_n);
-    fwrite("\n", sizeof(char), 1, f_n);
-  }
-  fwrite("\n", sizeof(char), 1, f_n);
-
-  char t1 = '\0';
-  char t2 = '\0';
-  t2 = fgetc(f_bkp);
-  while(!feof(f_bkp)){
-     t1 = t2;
-     t2 = fgetc(f_bkp);
-     if(t1 == '\n' && t2 == '\n') break;
-  }
-
-  while(!feof(f_bkp)){
-    char c = fgetc(f_bkp);
-    if(feof(f_bkp))break;
-    fputc(c, f_n);
-  }
-  fclose(f_bkp);
-  fclose(f_n);
-  //int remove(f_bkp);
   return 0;
 }
 
