@@ -55,7 +55,8 @@ Le module dictionnaire doit :
 Ce module est le lien entre les données locales et les valeurs sur internet.
 Il doit permettre :
   - ✓ La mise à jours des prix d’un dictionnaire.
-  - La recherche / validation de nouveaux tokens.
+  - La recherche / validation de nouveaux tokens :
+    - ✓ Grep sed to implement in c : `cat tist.txt | sed -E 's/.\{([^\}]*)\}/\1\n/g' | grep '"symbol":"btc"'`
 
 
 #### main v1.0 
