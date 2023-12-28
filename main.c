@@ -5,6 +5,11 @@
 
 int main(int argc, char** argv){
 
+   token_list();
+   token_list();
+   token_list();
+   return 0;
+
   //st_token t = {"bitcoin", "btc", "Bitcoin"};
   //st_token t = {"ethereum", "eth", "Ethereum"};
   dictionary_load();

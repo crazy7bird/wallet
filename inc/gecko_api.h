@@ -6,5 +6,5 @@ struct st_token;
 struct st_dictionary;
 
 int price_update(st_dictionary * dictionnary);
-
+int token_list();
 #endif /*_GECKO_API_H_*/

@@ -105,7 +105,7 @@ int regex_token_dic (char* source, st_dictionary * dictionary)
  * @param dictionnary    @ of dictionnary that need price updates.
  * @return char*         URL for coingecko API
  */
-char* generate_url(st_dictionary * dictionnary){
+static char* generate_url(st_dictionary * dictionnary){
   char * finalUrl = 0;
   char * finalUrl_tail = 0;
   size_t finalSize;
@@ -132,4 +132,23 @@ int price_update(st_dictionary * dictionary){
     char * url = generate_url(dictionary);
     ask_url(url, &resp);
     regex_token_dic(resp.response, dictionary);
+    free(resp.response);
+}
+
+/* List all token on coingecko */
+static int token_list_query(struct memory * resp){
+    char *url = "https://api.coingecko.com/api/v3/coins/list";
+    ask_url(url, resp);
+    return 0;
+}
+
+
+int token_list(){
+  static struct memory api_list = {0};
+  if(api_list.size == 0){
+    //Query only once the list of token. durring all the program.
+    token_list_query(&api_list);
+  }
+  printf("%.10s\n",api_list.response);
+  return 0;
 }
