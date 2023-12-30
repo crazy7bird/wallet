@@ -68,7 +68,6 @@ int ask_url(char* url, struct memory* ret_data)
  */
 int regex_token_dic (char* source, st_dictionary * dictionary)
 {
-  //char * regexString =  "\"id\":\"([^\"]*)\"[^}]*current_price\".([^,]*)";
   char * regexString = "\"([^\"]*)\":[^:]*:([^}]*)}";
   size_t maxGroups = 3*dictionary->size;
   
