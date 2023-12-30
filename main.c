@@ -2,12 +2,13 @@
 #include"inc/transaction.h"
 #include"inc/dictionary.h"
 #include"inc/gecko_api.h"
+#include"inc/token_search.h"
 
 int main(int argc, char** argv){
 
-   token_list();
-   token_list();
-   token_list();
+
+   test_token_list();
+   free_token_list();
    return 0;
 
   //st_token t = {"bitcoin", "btc", "Bitcoin"};

@@ -11,6 +11,7 @@ set(SOURCES
     src/dictionary.c
     src/transactions.c
     src/gecko_api.c
+    src/token_search.c
     main.c
 )
 

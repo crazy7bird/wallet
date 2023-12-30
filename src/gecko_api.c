@@ -141,13 +141,12 @@ static int token_list_query(struct memory * resp){
     return 0;
 }
 
-
-int token_list(){
-  static struct memory api_list = {0};
+char* token_list(void){
+  struct memory api_list = {0};
+  
   if(api_list.size == 0){
     //Query only once the list of token. durring all the program.
     token_list_query(&api_list);
   }
-  printf("%.10s\n",api_list.response);
-  return 0;
+  return &api_list.response[0];
 }

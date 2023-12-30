@@ -10,4 +10,5 @@
  * 
  */
 
-#include "gecko_api.h"
+char* test_token_list(void);
+void free_token_list();
