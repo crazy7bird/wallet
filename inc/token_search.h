@@ -1,3 +1,5 @@
+#ifndef _TOKEN_SEARCH_H_
+#define _TOKEN_SEARCH_H_
 /**
  * @file token_search.h
  * @author your name (you@domain.com)
@@ -10,5 +12,8 @@
  * 
  */
 
-char* test_token_list(void);
-void free_token_list();
+void token_list_init(void);
+void token_list_free();
+void token_list_print();
+
+#endif /* _TOKEN_SEARCH_H_ */

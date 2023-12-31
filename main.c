@@ -7,8 +7,9 @@
 int main(int argc, char** argv){
 
 
-   test_token_list();
-   free_token_list();
+   token_list_init();
+   token_list_print();
+   token_list_free();
    return 0;
 
   //st_token t = {"bitcoin", "btc", "Bitcoin"};
