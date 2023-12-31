@@ -8,7 +8,10 @@ int main(int argc, char** argv){
 
 
    token_list_init();
-   token_list_print();
+   //token_list_print();
+   char* search = token_search_by_id("bitcoin");
+   printf("%s\n",search);
+   free(search);
    token_list_free();
    return 0;
 

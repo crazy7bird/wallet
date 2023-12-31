@@ -10,6 +10,7 @@
  */
 char * gl_token_list = NULL;
 int gl_n_token = 0;
+size_t gl_token_list_size = 0;
 /**
  * @brief Convert the Json url : [{}]into \\n
  * @return int number of token available on coingecko.
@@ -38,6 +39,7 @@ static int line_converter(){
     }
     gl_token_list[y] = '\0';
     gl_token_list = realloc(gl_token_list, strlen(gl_token_list)*sizeof(char));
+    gl_token_list_size = strlen(gl_token_list);
     return number_token;
 }
 
@@ -67,7 +69,21 @@ static char* next_comma(char* buffer){
 
 
 char * token_search_by_id(char* id){
-    char * buffer = NULL;
+    printf("DEBUG : \n - %ld\n - %d\n",gl_token_list_size,gl_n_token);
+    printf("start : %.100s\n", gl_token_list);
+    //We will realloc later.
+    char * buffer = calloc(gl_token_list_size,sizeof(char)); //calloc for init all memory to 0
+    char * index = gl_token_list;
+    size_t strlen2cmp = strlen(id);
+    for(int i = 0; i<gl_n_token; i++){
+        char * line_end = next_line(index);
+        if(line_end == NULL)break;
+        if(strncmp(index,id,strlen2cmp) == 0){
+            strncat(buffer,index,(line_end-1 - index));
+        }
+        index = line_end;
+    }
+    return buffer;
 }
 
 void token_list_free(){

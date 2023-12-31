@@ -15,5 +15,6 @@
 void token_list_init(void);
 void token_list_free();
 void token_list_print();
+char * token_search_by_id(char* id);
 
 #endif /* _TOKEN_SEARCH_H_ */
