@@ -50,6 +50,8 @@ static int line_converter(){
  * @return char* 
  */
 static char* next_line(char* buffer){
+    // @todo : test if start by \n 
+    printf("next_line buffer = %.22s\n",buffer);
     while(*buffer != '\n' && *buffer != '\0')buffer++;
     if(*buffer == '\0' || buffer[1] == '\0') return NULL;
     return buffer++;
@@ -69,15 +71,14 @@ static char* next_comma(char* buffer){
 
 
 char * token_search_by_id(char* id){
-    printf("DEBUG : \n - %ld\n - %d\n",gl_token_list_size,gl_n_token);
-    printf("start : %.100s\n", gl_token_list);
     //We will realloc later.
     char * buffer = calloc(gl_token_list_size,sizeof(char)); //calloc for init all memory to 0
     char * index = gl_token_list;
     size_t strlen2cmp = strlen(id);
     for(int i = 0; i<gl_n_token; i++){
+        printf("t_s_b index : %.22s\n", index);
         char * line_end = next_line(index);
-        if(line_end == NULL)break;
+        //if(line_end == NULL)break;
         if(strncmp(index,id,strlen2cmp) == 0){
             strncat(buffer,index,(line_end-1 - index));
         }
