@@ -70,6 +70,7 @@ Le main est un CLI qui doit fournir les commandes suivante :
     - token search [-i ID] [-s symbol] [-n name] => retourne une liste des token disponibles :
        - num (position dans le csv), id, symbol, name\n
     - token add num => Ajoute au dictionnaire le token de la position num dans le fichier CSV.
+    - token update (update the file)
 
   - wallet :
     - Affichage des toteaux du wallet par défaut.

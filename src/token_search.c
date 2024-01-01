@@ -1,8 +1,11 @@
-#include "token_search.h"
-#include "gecko_api.h"
+#include "../inc/token_search.h"
+#include "../inc/gecko_api.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
+
+#define FILE_NAME "data/token_list.csv"
 
 /**
  * @brief token_list is global var that contain list of all token from coingecko.
@@ -122,6 +125,20 @@ char * token_search_by_name(char* name){
         index = line_end;
     }
     return buffer;
+}
+
+static int file_exist(){
+    if (access(FILE_NAME, F_OK) == 0) return 1;
+    return 0;
+}
+
+void token_list_update(){
+    if(file_exist()) remove(FILE_NAME);
+    gl_token_list = token_list();
+    gl_n_token = line_converter();
+    FILE * f = fopen(FILE_NAME, "w");
+    fprintf(f,gl_token_list);
+    fclose(f);
 }
 
 void token_list_free(){
