@@ -16,12 +16,26 @@ set(SOURCES
     main.c
 )
 
+set(SOURCES
+    src/dictionary.c
+    src/transactions.c
+    src/gecko_api.c
+    src/token_search.c
+    src/token_search_cli.c
+    search.c
+)
+
 # Add an executable with the above sources
 add_executable(wallet ${SOURCES})
+add_executable(search ${SOURCES})
 
 # Set the directories that should be included in the build command for this target
 # when running g++ these will be included as -I/directory/path/
 target_include_directories(wallet
+    PRIVATE 
+        ${PROJECT_SOURCE_DIR}/inc
+)
+target_include_directories(search
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/inc
 )
@@ -30,3 +44,4 @@ target_include_directories(wallet
 find_package(CURL REQUIRED) 
 include_directories(${CURL_INCLUDE_DIR})
 target_link_libraries(wallet ${CURL_LIBRARIES})
+target_link_libraries(search ${CURL_LIBRARIES})

@@ -61,6 +61,15 @@ Il doit permettre :
 
 #### main v1.0 
 Le main est un CLI qui doit fournir les commandes suivante :
+  - Multiple main pour faire un CLI :
+    - Le token_search peut être un programme a part entière :
+        - Télécharge et met en forme la liste des token disponible chez coingecko.
+        - Enregistre la liste sous format csv avec un timestamp.
+        - Si le timestamp est suppérieur à 1J, re-télécharge la liste, supprime l’ancien fichier et en créer un nouveau.
+        - Effectue les recherches sur se fichier.
+    - token search [-i ID] [-s symbol] [-n name] => retourne une liste des token disponibles :
+       - num (position dans le csv), id, symbol, name\n
+    - token add num => Ajoute au dictionnaire le token de la position num dans le fichier CSV.
 
   - wallet :
     - Affichage des toteaux du wallet par défaut.
