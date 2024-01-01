@@ -141,6 +141,24 @@ void token_list_update(){
     fclose(f);
 }
 
+void token_list_load(){
+    FILE * f = fopen(FILE_NAME, "r");
+
+    fseek( f , 0L , SEEK_END);
+    long lSize = ftell( f );
+    rewind( f );
+    gl_token_list = calloc( 1, lSize+1 );
+    /* copy the file into the buffer */
+    if( 1!=fread( gl_token_list , lSize, 1 , f))
+    fclose(f);
+
+    //Update vars 
+    gl_n_token = 0; // @todo update this var 
+    
+    gl_token_list_size = strlen(gl_token_list);
+
+}
+
 void token_list_free(){
     free(gl_token_list);
     return;
@@ -153,7 +171,10 @@ void token_list_print(){
 }
 
 void token_list_init(){
+    if(!file_exist()) token_list_update();
+    /*
     gl_token_list = token_list();
     gl_n_token = line_converter();
+    */
     return;
 }
