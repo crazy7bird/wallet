@@ -149,14 +149,15 @@ void token_list_load(){
     rewind( f );
     gl_token_list = calloc( 1, lSize+1 );
     /* copy the file into the buffer */
-    if( 1!=fread( gl_token_list , lSize, 1 , f))
+    fread( gl_token_list , lSize, 1 , f);
     fclose(f);
 
     //Update vars 
-    gl_n_token = 0; // @todo update this var 
-    
     gl_token_list_size = strlen(gl_token_list);
+    gl_n_token = 0; // @todo update this var 
+    for(int i =0; i<gl_token_list_size ; i++)if(gl_token_list[i] == '\n')gl_n_token++;
 
+    return;
 }
 
 void token_list_free(){
