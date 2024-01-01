@@ -12,6 +12,7 @@ set(SOURCES
     src/transactions.c
     src/gecko_api.c
     src/token_search.c
+    src/token_search_cli.c
     main.c
 )
 

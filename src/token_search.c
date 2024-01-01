@@ -67,9 +67,10 @@ static char* next_line(char* buffer){
  * @return char* 
  */
 static char* next_comma(char* buffer){
+    if(*buffer == '\n')buffer++;
     while(*buffer != '\n' && *buffer != ',' && *buffer != '\0')buffer++;
     if(*buffer == '\0' || buffer[1] == '\0') return NULL;
-    return buffer++;
+    return ++buffer;
 }
 
 
@@ -80,8 +81,42 @@ char * token_search_by_id(char* id){
     size_t strlen2cmp = strlen(id);
     for(int i = 0; i<gl_n_token; i++){
         char * line_end = next_line(index);
-        //if(line_end == NULL)break;
         if(strncmp(index,id,strlen2cmp) == 0){
+            strncat(buffer,index,(line_end - index));
+        }
+        index = line_end;
+    }
+    return buffer;
+}
+
+char * token_search_by_symbol(char* symbol){
+    //We will realloc later.
+    char * buffer = calloc(gl_token_list_size,sizeof(char)); //calloc for init all memory to 0
+    char * index = gl_token_list;
+    char * search_index = gl_token_list;
+    size_t strlen2cmp = strlen(symbol);
+    for(int i = 0; i<gl_n_token; i++){
+        search_index = next_comma(index);
+        char * line_end = next_line(index);
+        if(strncmp(search_index,symbol,strlen2cmp) == 0){
+            strncat(buffer,index,(line_end - index));
+        }
+        index = line_end;
+    }
+    return buffer;
+}
+
+char * token_search_by_name(char* name){
+    //We will realloc later.
+    char * buffer = calloc(gl_token_list_size,sizeof(char)); //calloc for init all memory to 0
+    char * index = gl_token_list;
+    char * search_index = gl_token_list;
+    size_t strlen2cmp = strlen(name);
+    for(int i = 0; i<gl_n_token; i++){
+        search_index = next_comma(index);
+        search_index = next_comma(search_index);
+        char * line_end = next_line(index);
+        if(strncmp(search_index,name,strlen2cmp) == 0){
             strncat(buffer,index,(line_end - index));
         }
         index = line_end;
