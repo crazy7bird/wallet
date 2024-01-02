@@ -12,6 +12,8 @@
  * 
  */
 
+#include <stdlib.h>
+
 typedef struct token_search token_search;
 struct token_search{
   char* token_list;
@@ -22,11 +24,12 @@ struct token_search{
   int n_token_search;
 };
 
-void token_list_init(void);
-void token_list_free();
-void token_list_print();
-char * token_search_by_id(char* id);
-char * token_search_by_symbol(char* symbol);
-char * token_search_by_name(char* name);
+token_search* token_search_init(void);
+void token_search_free(token_search* t );
+void token_list_print(token_search *t);
+void token_search_print(token_search *t);
+void token_search_by_id(token_search*, char* id);
+void token_search_by_symbol(token_search*, char* symbol);
+void token_search_by_name(token_search*, char* name);
 
 #endif /* _TOKEN_SEARCH_H_ */

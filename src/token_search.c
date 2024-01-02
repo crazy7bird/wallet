@@ -8,27 +8,19 @@
 #define FILE_NAME "data/token_list.csv"
 
 /**
- * @brief token_list is global var that contain list of all token from coingecko.
- * 
- */
-char * gl_token_list = NULL;
-int gl_n_token = 0;
-size_t gl_token_list_size = 0;
-char * gl_token_search = NULL; // Save the search.
-/**
  * @brief Convert the Json url : [{}]into \\n
  * @return int number of token available on coingecko.
  */
 /* id,symbol,name */
-static int line_converter(){
-    int len = strlen(gl_token_list);
-    int number_token = 0;
+static void line_converter(token_search * t){
+    int len = strlen(t->token_list);
+    t->n_token_list = 0;
     int y = 0;
     for(int i =0; i<len ; i++){
-        if(strncmp(&gl_token_list[i], "\"id\":", 5)==0) i+= 5;
-        if(strncmp(&gl_token_list[i], "\"symbol\":", 9)==0) i+= 9;
-        if(strncmp(&gl_token_list[i], "\"name\":", 7)==0) i+= 7;
-        char c = gl_token_list[i];
+        if(strncmp(&t->token_list[i], "\"id\":", 5)==0) i+= 5;
+        if(strncmp(&t->token_list[i], "\"symbol\":", 9)==0) i+= 9;
+        if(strncmp(&t->token_list[i], "\"name\":", 7)==0) i+= 7;
+        char c = t->token_list[i];
         if(c == '{' ||
            c == '[' ||
            c == ']' ||
@@ -36,15 +28,15 @@ static int line_converter(){
         if(c == '}'){
             c = '\n';
             i+=2; // remove the extra , 
-            number_token++;
+            t->n_token_list++;
         }
-        gl_token_list[y]=c;
+        t->token_list[y]=c;
         y++;
     }
-    gl_token_list[y] = '\0';
-    gl_token_list = realloc(gl_token_list, strlen(gl_token_list)*sizeof(char));
-    gl_token_list_size = strlen(gl_token_list);
-    return number_token;
+    t->token_list[y] = '\0';
+    t->token_list = realloc(t->token_list, strlen(t->token_list)*sizeof(char));
+    t->token_list_size = strlen(t->token_list);
+    return;
 }
 
 /**
@@ -82,28 +74,29 @@ static char * search_clear(char * buffer){
     buffer = realloc(buffer, size *sizeof(char));
 }
 
-char * token_search_by_id(char* id){
+void token_search_by_id(token_search *t , char* id){
     //We will realloc later.
-    char * buffer = calloc(gl_token_list_size,sizeof(char)); //calloc for init all memory to 0
-    char * index = gl_token_list;
+    t->token_search = calloc(t->token_list_size,sizeof(char)); //calloc for init all memory to 0
+    char * index = t->token_list;
     size_t strlen2cmp = strlen(id);
-    for(int i = 0; i<gl_n_token; i++){
+    for(int i = 0; i<t->n_token_list; i++){
         char * line_end = next_line(index);
         if(strncmp(index,id,strlen2cmp) == 0){
-            strncat(buffer,index,(line_end - index));
+            strncat(t->token_search,index,(line_end - index));
         }
         index = line_end;
     }
-    return search_clear(buffer);
+    t->token_search = search_clear(t->token_search);
+    return;
 }
 
-char * token_search_by_symbol(char* symbol){
+void token_search_by_symbol(token_search *t, char* symbol){
     //We will realloc later.
-    char * buffer = calloc(gl_token_list_size,sizeof(char)); //calloc for init all memory to 0
-    char * index = gl_token_list;
-    char * search_index = gl_token_list;
+    char * buffer = calloc(t->token_list_size,sizeof(char)); //calloc for init all memory to 0
+    char * index = t->token_list;
+    char * search_index = t->token_list;
     size_t strlen2cmp = strlen(symbol);
-    for(int i = 0; i<gl_n_token; i++){
+    for(int i = 0; i<t->n_token_list; i++){
         search_index = next_comma(index);
         char * line_end = next_line(index);
         if(strncmp(search_index,symbol,strlen2cmp) == 0){
@@ -111,16 +104,17 @@ char * token_search_by_symbol(char* symbol){
         }
         index = line_end;
     }
-    return search_clear(buffer);
+    t->token_search = search_clear(t->token_search);
+    return;
 }
 
-char * token_search_by_name(char* name){
+void token_search_by_name(token_search *t, char* name){
     //We will realloc later.
-    char * buffer = calloc(gl_token_list_size,sizeof(char)); //calloc for init all memory to 0
-    char * index = gl_token_list;
-    char * search_index = gl_token_list;
+    char * buffer = calloc(t->token_list_size,sizeof(char)); //calloc for init all memory to 0
+    char * index = t->token_list;
+    char * search_index = t->token_list;
     size_t strlen2cmp = strlen(name);
-    for(int i = 0; i<gl_n_token; i++){
+    for(int i = 0; i<t->n_token_list; i++){
         search_index = next_comma(index);
         search_index = next_comma(search_index);
         char * line_end = next_line(index);
@@ -129,7 +123,8 @@ char * token_search_by_name(char* name){
         }
         index = line_end;
     }
-    return search_clear(buffer);
+    t->token_search = search_clear(t->token_search);
+    return;
 }
 
 static int file_exist(){
@@ -140,62 +135,70 @@ static void token_list_update(token_search * t){
     // @ todo : finish un_global prog
     if(file_exist())remove(FILE_NAME);
     t->token_list = token_list();
-    t->n_token_list = line_converter();
+    line_converter(t);
     FILE * f = fopen(FILE_NAME, "w");
     fputs(t->token_list,f);
     fclose(f);
 }
 
-static void token_list_load(){
+static void token_list_load(token_search * t){
     FILE * f = fopen(FILE_NAME, "r");
 
     fseek( f , 0L , SEEK_END);
     long lSize = ftell( f );
     rewind( f );
-    gl_token_list = calloc( 1, lSize+1 );
+    t->token_list = calloc( 1, lSize+1 );
     /* copy the file into the buffer */
-    fread( gl_token_list , lSize, 1 , f);
+    fread( t->token_list , lSize, 1 , f);
     fclose(f);
 
     //Update vars 
-    gl_token_list_size = strlen(gl_token_list);
-    gl_n_token = 0; // @todo update this var 
-    for(int i =0; i<gl_token_list_size ; i++)if(gl_token_list[i] == '\n')gl_n_token++;
+    t->token_list_size = strlen(t->token_list);
+    t->n_token_list = 0; // @todo update this var 
+    for(int i =0; i<t->token_list_size ; i++)if(t->token_list[i] == '\n')t->n_token_list++;
 
     return;
 }
 
-void token_list_free(){
-    if(gl_token_list =! NULL)free(gl_token_list);
-    if(gl_token_search =! NULL)free(gl_token_search);
+void token_search_free(token_search * t){
+    if(t->token_list != NULL)free(t->token_list);
+    if(t->token_search != NULL)free(t->token_search);
     return;
 }
 
 
-void token_list_print(char * token_list){
+static void list_print(char * buffer){
     int line_count = 0;
     printf("%d : ",line_count++);
-    while(*token_list != '\0')
+    while(*buffer != '\0')
     {
-        printf("%c",*token_list);
-        if(*token_list == '\n' && token_list[1] != '\0'){
+        printf("%c",*buffer);
+        if(*buffer == '\n' && buffer[1] != '\0'){
             printf("%d : ",line_count++);
         }
-        token_list++;
+        buffer++;
     }
     printf("\n");
     return;
 }
 
-void token_search_init(token_search *t){
-    t = calloc(1, sizeof(token_search));
+void token_list_print(token_search *t){
+    list_print(t->token_list);
+}
+
+void token_search_print(token_search *t){
+    list_print(t->token_search);
+}
+
+token_search * token_search_init(void){
+    token_search * t = calloc(1, sizeof(token_search));
     if(!file_exist()){
         printf("DEBUG = file dont exist\n");
         token_list_update(t);
     }
     else{
         printf("DEBUG = file exist, and load\n");
-        token_list_load();
+        token_list_load(t);
     }
-    return;
+    return t;
 }

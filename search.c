@@ -2,17 +2,15 @@
 #include"inc/token_search.h"
 
 
-
-
 int main(int argc, char** argv){
 
   printf("hello from search\n");
 
-  token_search *t;
+  token_search *t = token_search_init();
 
-  token_list_init();
-  //printf("%s\n",token_search_by_id("ethereum"));
-  token_list_print(token_search_by_id("ethereum"));
+  token_search_by_id(t,"ethereum");
+  token_search_print(t);
+  token_search_free(t);
 
   return 0;
 }
