@@ -12,6 +12,16 @@
  * 
  */
 
+typedef struct token_search token_search;
+struct token_search{
+  char* token_list;
+  size_t token_list_size;
+  int n_token_list;
+  char* token_search;
+  size_t token_search_size;
+  int n_token_search;
+};
+
 void token_list_init(void);
 void token_list_free();
 void token_list_print();

@@ -76,6 +76,11 @@ static char* next_comma(char* buffer){
     return ++buffer;
 }
 
+static char * search_clear(char * buffer){
+    size_t size = strlen(buffer);
+    buffer[size-1] = '\0'; //clear the last \n
+    buffer = realloc(buffer, size *sizeof(char));
+}
 
 char * token_search_by_id(char* id){
     //We will realloc later.
@@ -89,7 +94,7 @@ char * token_search_by_id(char* id){
         }
         index = line_end;
     }
-    return buffer;
+    return search_clear(buffer);
 }
 
 char * token_search_by_symbol(char* symbol){
@@ -106,7 +111,7 @@ char * token_search_by_symbol(char* symbol){
         }
         index = line_end;
     }
-    return buffer;
+    return search_clear(buffer);
 }
 
 char * token_search_by_name(char* name){
@@ -124,19 +129,20 @@ char * token_search_by_name(char* name){
         }
         index = line_end;
     }
-    return buffer;
+    return search_clear(buffer);
 }
 
 static int file_exist(){
     return access(FILE_NAME, F_OK) + 1; // access return -1 if dont exist and 0 if exist -1+1 = 0 if dont exist and 0+1 = 1 if exist.
 }
 
-static void token_list_update(){
+static void token_list_update(token_search * t){
+    // @ todo : finish un_global prog
     if(file_exist())remove(FILE_NAME);
-    gl_token_list = token_list();
-    gl_n_token = line_converter();
+    t->token_list = token_list();
+    t->n_token_list = line_converter();
     FILE * f = fopen(FILE_NAME, "w");
-    fputs(gl_token_list,f);
+    fputs(t->token_list,f);
     fclose(f);
 }
 
@@ -160,20 +166,32 @@ static void token_list_load(){
 }
 
 void token_list_free(){
-    free(gl_token_list);
+    if(gl_token_list =! NULL)free(gl_token_list);
+    if(gl_token_search =! NULL)free(gl_token_search);
     return;
 }
 
-void token_list_print(){
-    printf("%s\n", gl_token_list);
-    printf("%d\n",gl_n_token);
+
+void token_list_print(char * token_list){
+    int line_count = 0;
+    printf("%d : ",line_count++);
+    while(*token_list != '\0')
+    {
+        printf("%c",*token_list);
+        if(*token_list == '\n' && token_list[1] != '\0'){
+            printf("%d : ",line_count++);
+        }
+        token_list++;
+    }
+    printf("\n");
     return;
 }
 
-void token_list_init(){
+void token_search_init(token_search *t){
+    t = calloc(1, sizeof(token_search));
     if(!file_exist()){
         printf("DEBUG = file dont exist\n");
-        token_list_update();
+        token_list_update(t);
     }
     else{
         printf("DEBUG = file exist, and load\n");
