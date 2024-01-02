@@ -128,20 +128,19 @@ char * token_search_by_name(char* name){
 }
 
 static int file_exist(){
-    if (access(FILE_NAME, F_OK) == 0) return 1;
-    return 0;
+    return access(FILE_NAME, F_OK) + 1; // access return -1 if dont exist and 0 if exist -1+1 = 0 if dont exist and 0+1 = 1 if exist.
 }
 
-void token_list_update(){
-    if(file_exist()) remove(FILE_NAME);
+static void token_list_update(){
+    if(file_exist())remove(FILE_NAME);
     gl_token_list = token_list();
     gl_n_token = line_converter();
     FILE * f = fopen(FILE_NAME, "w");
-    fprintf(f,gl_token_list);
+    fputs(gl_token_list,f);
     fclose(f);
 }
 
-void token_list_load(){
+static void token_list_load(){
     FILE * f = fopen(FILE_NAME, "r");
 
     fseek( f , 0L , SEEK_END);
@@ -172,10 +171,13 @@ void token_list_print(){
 }
 
 void token_list_init(){
-    if(!file_exist()) token_list_update();
-    /*
-    gl_token_list = token_list();
-    gl_n_token = line_converter();
-    */
+    if(!file_exist()){
+        printf("DEBUG = file dont exist\n");
+        token_list_update();
+    }
+    else{
+        printf("DEBUG = file exist, and load\n");
+        token_list_load();
+    }
     return;
 }

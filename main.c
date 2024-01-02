@@ -3,7 +3,6 @@
 #include"inc/dictionary.h"
 #include"inc/gecko_api.h"
 #include"inc/token_search.h"
-#include"inc/token_search_cli.h"
 
 int main(int argc, char** argv){
 
