@@ -92,7 +92,7 @@ void token_search_by_id(token_search *t , char* id){
 
 void token_search_by_symbol(token_search *t, char* symbol){
     //We will realloc later.
-    char * buffer = calloc(t->token_list_size,sizeof(char)); //calloc for init all memory to 0
+     t->token_search = calloc(t->token_list_size,sizeof(char)); //calloc for init all memory to 0
     char * index = t->token_list;
     char * search_index = t->token_list;
     size_t strlen2cmp = strlen(symbol);
@@ -100,7 +100,7 @@ void token_search_by_symbol(token_search *t, char* symbol){
         search_index = next_comma(index);
         char * line_end = next_line(index);
         if(strncmp(search_index,symbol,strlen2cmp) == 0){
-            strncat(buffer,index,(line_end - index));
+            strncat( t->token_search,index,(line_end - index));
         }
         index = line_end;
     }
@@ -110,7 +110,7 @@ void token_search_by_symbol(token_search *t, char* symbol){
 
 void token_search_by_name(token_search *t, char* name){
     //We will realloc later.
-    char * buffer = calloc(t->token_list_size,sizeof(char)); //calloc for init all memory to 0
+     t->token_search = calloc(t->token_list_size,sizeof(char)); //calloc for init all memory to 0
     char * index = t->token_list;
     char * search_index = t->token_list;
     size_t strlen2cmp = strlen(name);
@@ -119,7 +119,7 @@ void token_search_by_name(token_search *t, char* name){
         search_index = next_comma(search_index);
         char * line_end = next_line(index);
         if(strncmp(search_index,name,strlen2cmp) == 0){
-            strncat(buffer,index,(line_end - index));
+            strncat( t->token_search,index,(line_end - index));
         }
         index = line_end;
     }
