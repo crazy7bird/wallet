@@ -68,10 +68,11 @@ static char* next_comma(char* buffer){
     return ++buffer;
 }
 
-static char * search_clear(char * buffer){
-    size_t size = strlen(buffer);
-    buffer[size-1] = '\0'; //clear the last \n
-    buffer = realloc(buffer, size *sizeof(char));
+static char * search_clear(token_search * t){
+    size_t size = strlen(t->token_search);
+    t->token_search[size-1] = '\0'; //clear the last \n
+    t->token_search = realloc(t->token_search, size *sizeof(char));
+    t->token_search_size = strlen(t->token_search);
 }
 
 void token_search_by_id(token_search *t , char* id){
@@ -83,10 +84,11 @@ void token_search_by_id(token_search *t , char* id){
         char * line_end = next_line(index);
         if(strncmp(index,id,strlen2cmp) == 0){
             strncat(t->token_search,index,(line_end - index));
+            t->n_token_search ++;
         }
         index = line_end;
     }
-    t->token_search = search_clear(t->token_search);
+    search_clear(t);
     return;
 }
 
@@ -101,10 +103,11 @@ void token_search_by_symbol(token_search *t, char* symbol){
         char * line_end = next_line(index);
         if(strncmp(search_index,symbol,strlen2cmp) == 0){
             strncat( t->token_search,index,(line_end - index));
+            t->n_token_search ++;
         }
         index = line_end;
     }
-    t->token_search = search_clear(t->token_search);
+    search_clear(t);
     return;
 }
 
@@ -120,10 +123,11 @@ void token_search_by_name(token_search *t, char* name){
         char * line_end = next_line(index);
         if(strncmp(search_index,name,strlen2cmp) == 0){
             strncat( t->token_search,index,(line_end - index));
+            t->n_token_search ++;
         }
         index = line_end;
     }
-    t->token_search = search_clear(t->token_search);
+    search_clear(t);
     return;
 }
 
