@@ -131,13 +131,13 @@ static int file_exist(){
     return access(FILE_NAME, F_OK) + 1; // access return -1 if dont exist and 0 if exist -1+1 = 0 if dont exist and 0+1 = 1 if exist.
 }
 
-static void token_list_update(token_search * t){
-    // @ todo : finish un_global prog
+void token_list_update(){
+    token_search t;
     if(file_exist())remove(FILE_NAME);
-    t->token_list = token_list();
-    line_converter(t);
+    t.token_list = token_list();
+    line_converter(&t);
     FILE * f = fopen(FILE_NAME, "w");
-    fputs(t->token_list,f);
+    fputs(t.token_list,f);
     fclose(f);
 }
 
@@ -163,6 +163,7 @@ static void token_list_load(token_search * t){
 void token_search_free(token_search * t){
     if(t->token_list != NULL)free(t->token_list);
     if(t->token_search != NULL)free(t->token_search);
+    free(t);
     return;
 }
 
@@ -190,15 +191,11 @@ void token_search_print(token_search *t){
     list_print(t->token_search);
 }
 
-token_search * token_search_init(void){
+token_search * token_search_init(){
     token_search * t = calloc(1, sizeof(token_search));
     if(!file_exist()){
-        printf("DEBUG = file dont exist\n");
-        token_list_update(t);
+        token_list_update();
     }
-    else{
-        printf("DEBUG = file exist, and load\n");
-        token_list_load(t);
-    }
+    token_list_load(t);
     return t;
 }

@@ -25,6 +25,7 @@ struct token_search{
 };
 
 token_search* token_search_init(void);
+void token_list_update();
 void token_search_free(token_search* t );
 void token_list_print(token_search *t);
 void token_search_print(token_search *t);
