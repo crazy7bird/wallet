@@ -68,7 +68,19 @@ static char* next_comma(char* buffer){
     return ++buffer;
 }
 
-static char * search_clear(token_search * t){
+
+static void search_init(token_search * t){
+    if(t->token_search != NULL){ //use previous result for new search
+       free(t->token_list);
+       t->token_list = t->token_search;
+       t->n_token_list = t->n_token_search;
+       t->token_list_size = t->token_search_size;
+       t->n_token_search = 0;
+       t->token_search_size = 0;
+    }
+    t->token_search = calloc(t->token_list_size,sizeof(char));
+}
+static void search_clear(token_search * t){
     size_t size = strlen(t->token_search);
     t->token_search[size-1] = '\0'; //clear the last \n
     t->token_search = realloc(t->token_search, size *sizeof(char));
@@ -77,7 +89,8 @@ static char * search_clear(token_search * t){
 
 void token_search_by_id(token_search *t , char* id){
     //We will realloc later.
-    t->token_search = calloc(t->token_list_size,sizeof(char)); //calloc for init all memory to 0
+    //t->token_search = calloc(t->token_list_size,sizeof(char)); //calloc for init all memory to 0
+    search_init(t);
     char * index = t->token_list;
     size_t strlen2cmp = strlen(id);
     for(int i = 0; i<t->n_token_list; i++){
