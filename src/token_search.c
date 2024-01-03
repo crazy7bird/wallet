@@ -106,8 +106,7 @@ void token_search_by_id(token_search *t , char* id){
 }
 
 void token_search_by_symbol(token_search *t, char* symbol){
-    //We will realloc later.
-     t->token_search = calloc(t->token_list_size,sizeof(char)); //calloc for init all memory to 0
+    search_init(t);
     char * index = t->token_list;
     char * search_index = t->token_list;
     size_t strlen2cmp = strlen(symbol);
@@ -125,8 +124,7 @@ void token_search_by_symbol(token_search *t, char* symbol){
 }
 
 void token_search_by_name(token_search *t, char* name){
-    //We will realloc later.
-     t->token_search = calloc(t->token_list_size,sizeof(char)); //calloc for init all memory to 0
+    search_init(t);
     char * index = t->token_list;
     char * search_index = t->token_list;
     size_t strlen2cmp = strlen(name);
@@ -145,7 +143,8 @@ void token_search_by_name(token_search *t, char* name){
 }
 
 static int file_exist(){
-    return access(FILE_NAME, F_OK) + 1; // access return -1 if dont exist and 0 if exist -1+1 = 0 if dont exist and 0+1 = 1 if exist.
+    return access(FILE_NAME, F_OK) + 1; 
+    // access return -1 if dont exist and 0 if exist -1+1 = 0 if dont exist and 0+1 = 1 if exist.
 }
 
 void token_list_update(){

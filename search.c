@@ -66,34 +66,25 @@ int main(int argc, char** argv){
   if(o.update_flag) token_list_update();
 
   token_search *t = token_search_init();
-/* wait before do that 
+
   for(int i= 0; i<MAX_SEARCH_OPT; i++){
     switch(o.order[i]){
       case 'i' :
         token_search_by_id(t,o.id_flag);
         break;
       case 's' :
-        token_search_by_id(t,o.id_flag);
+        token_search_by_symbol(t,o.symbol_flag);
         break;
       case 'n' :
-        token_search_by_id(t,o.id_flag);
+        token_search_by_name(t,o.name_flag);
         break;
+      case 0:
+        continue;
       default :
         printf("ERROR in order\n");
     }
   }
-*/
 
-  if(o.id_flag != NULL){
-    token_search_by_id(t,o.id_flag);
-  }
-  else if(o.symbol_flag != NULL){
-    token_search_by_symbol(t,o.symbol_flag);
-  }
-  else if(o.name_flag != NULL){
-    token_search_by_name(t,o.name_flag);
-  }
-  
   token_search_print(t);
   token_search_free(t);
 
