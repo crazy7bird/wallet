@@ -32,5 +32,6 @@ void token_search_print(token_search *t);
 void token_search_by_id(token_search*, char* id);
 void token_search_by_symbol(token_search*, char* symbol);
 void token_search_by_name(token_search*, char* name);
+void token_search_save_to_dictionary(token_search* t, int line_number);
 
 #endif /* _TOKEN_SEARCH_H_ */

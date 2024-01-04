@@ -83,3 +83,8 @@ Le main est un CLI qui doit fournir les commandes suivante :
        - ajoute une transaction en vérifiant les paramètres, une suite de menu peut guider l’utilisateur.
   - wallet add token [name] :
         - Guide l’utilateur pour rechercher et ajouter un nouveau token au dictionnaire.
+
+## Known issues
+
+ - Folder data should be manualy created for token_search.c
+ - Folder data and file wallet.dic should be manualy created for dictionary.c

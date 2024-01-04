@@ -86,6 +86,16 @@ int main(int argc, char** argv){
   }
 
   token_search_print(t);
+
+  int line_number = -1;
+  printf("Select desired line number of token to add to dictionary :\n");
+  if(1 != scanf("%d",&line_number)){
+    printf( "Failed to convert input!\nOr quit desired\nBye Bye\n");
+    return 0;
+  }
+
+  token_search_save_to_dictionary(t,line_number);
+
   token_search_free(t);
 
   return 0;

@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.5)
 project (wallet)
 
 # Create a sources variable with a link to all cpp files to compile
-set(SOURCES
+set(SOURCES_WALLET
     src/dictionary.c
     src/transactions.c
     src/gecko_api.c
@@ -15,7 +15,7 @@ set(SOURCES
     main.c
 )
 
-set(SOURCES
+set(SOURCES_SEARCH
     src/dictionary.c
     src/transactions.c
     src/gecko_api.c
@@ -24,8 +24,8 @@ set(SOURCES
 )
 
 # Add an executable with the above sources
-add_executable(wallet ${SOURCES})
-add_executable(search ${SOURCES})
+add_executable(wallet ${SOURCES_WALLET})
+add_executable(search ${SOURCES_SEARCH})
 
 # Set the directories that should be included in the build command for this target
 # when running g++ these will be included as -I/directory/path/

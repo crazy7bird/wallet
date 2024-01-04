@@ -1,5 +1,6 @@
 #include "../inc/token_search.h"
 #include "../inc/gecko_api.h"
+#include "../inc/dictionary.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -214,4 +215,34 @@ token_search * token_search_init(){
     }
     token_list_load(t);
     return t;
+}
+
+void token_search_save_to_dictionary(token_search *t, int line_number){
+    if(t->token_search == NULL){
+        printf("ERROR - no shearch\n");
+        return;
+    }
+    if(line_number >= t->n_token_search){
+        printf("ERROR - line number entry is greater than the line in search\n");
+        return;
+    }
+    //Getting the line to the line :
+    char* line_start = t->token_search;
+    for(int i = 0; i<line_number;i++){
+        line_start = next_line(line_start);
+    }
+    // integrate it to st_token.
+    st_token token;
+    token.token_id = line_start;
+    token.token_symbol = next_comma(line_start);
+    token.token_name = next_comma(next_comma(line_start));
+    // Now replace [',','\n'] by \0 it destroy the search string.
+    while(*line_start != '\n' && *line_start!= '\0'){
+        if(*line_start == ',') *line_start = '\0';
+        line_start ++;
+    }
+    *line_start = '\0';
+
+    dictionary_add_token(&token);
+
 }
