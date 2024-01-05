@@ -14,8 +14,8 @@ struct st_transaction{
 };
 
 
-int transaction_save(st_transaction trans, char * path);
-void transaction_read_all(char* path);
+int transaction_save(st_transaction trans);
+void transaction_read_all();
 void transaction_print(st_transaction t);
 
 

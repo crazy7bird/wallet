@@ -5,24 +5,26 @@
 #include "dictionary.h"
 #include "transaction.h"
 
+#define FILE_NAME "data/wallet.tran"
+
 /*
 int gl_size; // number of trans.
 st_transaction *gl_trans;
 */
-int transaction_save(st_transaction trans, char * path){
+int transaction_save(st_transaction trans){
 
   // @todo : verif trans is all-right.
 
-  FILE * f = fopen(path, "ab");
+  FILE * f = fopen(FILE_NAME, "ab");
   fwrite(&trans, sizeof(st_transaction), 1, f);
   fclose(f);
   return 0; 
 }
 
-void transaction_read_all(char* path){
+void transaction_read_all(){
   st_transaction trans;
   long int s_pos = 9;
-  FILE * f = fopen(path, "rb");
+  FILE * f = fopen(FILE_NAME, "rb");
   fseek(f, s_pos, SEEK_SET);
   while(!feof(f)){
     printf("fread ret : %ld \n",fread(&trans, sizeof(st_transaction),1,f));
