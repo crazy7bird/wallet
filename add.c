@@ -21,7 +21,46 @@ struct option{
 }option_default = {0,false,0,false,0,false,0,false};
 typedef struct option option;
 
-
+/**
+* @brief convert str format DD/MM/YY-HH:mm:ss to timestamp.
+* @return timestamp or 0 if error.
+*/ 
+static time_t str2time(char *s){
+  time_t t;
+  struct tm tm;
+  int index = 0;
+/*
+    date.tm_year = 2023 - 1900;  // Year minus 1900
+    date.tm_mon = 0;             // Month (0-11, so 0 represents January)
+    date.tm_mday = 1;            // Day of the month
+    date.tm_hour = 0;            // Hour
+    date.tm_min = 0;             // Minute
+    date.tm_sec = 0;             // Second
+*/
+  // DD day.
+  int i;
+  i= atoi(s);
+  if(i <= 0 || i > 31 ) return 0;
+  tm.tm_mday = i;
+  for(;index<T_MAX_CHAR;index++){
+    if( s[index] == '\'){
+      index++;
+      break;
+    }
+  i = atoi(&s[index]);
+  if(i <= 0 ̤|| i >12) return 0;
+  tm.tm_mon = i;
+  for(;index<T_MAX_CHAR;index++){
+    if( s[index] == '\'){
+      index++;
+      break;
+    }
+  i = atoi(&s[index]);
+  if(i <= 0 || i > 99) return 0;
+  // years is actual years - 1900 => actual year + 100 will cover 2000 to 3000.
+  tm.tm_year = 100 + i;
+   
+}
 #define T_MAX_CHAR 17u
 #define T_MIN_CHAR 8u // DD/MM/YY or 
 #define MIN_DATE 1231110000 // 1er Jan 2009, you probably have no crypto back then.
