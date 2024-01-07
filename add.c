@@ -6,6 +6,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+
+#define T_MAX_CHAR 17u
+#define T_MIN_CHAR 8u // DD/MM/YY or 
+#define MIN_DATE 1231110000 // 1er Jan 2009, you probably have no crypto back then.
 /**
 * Contain options from args
 */
@@ -26,44 +30,65 @@ typedef struct option option;
 * @return timestamp or 0 if error.
 */ 
 static time_t str2time(char *s){
-  time_t t;
+  // Init all to 0.
   struct tm tm;
-  int index = 0;
-/*
-    date.tm_year = 2023 - 1900;  // Year minus 1900
-    date.tm_mon = 0;             // Month (0-11, so 0 represents January)
-    date.tm_mday = 1;            // Day of the month
-    date.tm_hour = 0;            // Hour
-    date.tm_min = 0;             // Minute
-    date.tm_sec = 0;             // Second
-*/
+  tm.tm_year = 0;            // Year minus 1900
+  tm.tm_mon = 0;             // Month (0-11, so 0 represents January)
+  tm.tm_mday = 0;            // Day of the month
+  tm.tm_hour = 0;            // Hour
+  tm.tm_min = 0;             // Minute
+  tm.tm_sec = 0;             // Second
+
   // DD day.
   int i;
   i= atoi(s);
   if(i <= 0 || i > 31 ) return 0;
   tm.tm_mday = i;
-  for(;index<T_MAX_CHAR;index++){
-    if( s[index] == '\'){
-      index++;
-      break;
-    }
-  i = atoi(&s[index]);
-  if(i <= 0 ̤|| i >12) return 0;
+
+  while(*s != '/' && *s != '\0') s++;
+  if(*s == '\0') return 0;
+  s++;
+  //MM January is 0;
+  i = atoi(s) -1;
+  if(i <= 0  || i >12) return 0;
   tm.tm_mon = i;
-  for(;index<T_MAX_CHAR;index++){
-    if( s[index] == '\'){
-      index++;
-      break;
-    }
-  i = atoi(&s[index]);
-  if(i <= 0 || i > 99) return 0;
-  // years is actual years - 1900 => actual year + 100 will cover 2000 to 3000.
-  tm.tm_year = 100 + i;
-   
+
+  while(*s != '/' && *s != '\0') s++;
+  if(*s == '\0') return 0;
+  s++;
+  // YY or YYYY Years is from 1900.
+  i = atoi(s);
+  if(i <= 0 || i > 3000) return 0;
+  if(i <= 99) tm.tm_year = (2000 + i) - 1900;
+  else tm.tm_year = i - 1900;
+
+  while(*s != '-' && *s != '\0') s++;
+  if(*s == '\0') return mktime(&tm);
+  s++;
+  // HH 0-23H
+  i = atoi(s);
+  if(i <= 0 || i > 23 ) return 0;
+  tm.tm_hour = i;
+
+  while(*s != ':' && *s != '\0') s++;
+  if(*s == '\0') return mktime(&tm);
+  s++;
+  // mm 0-59 min
+  i = atoi(s);
+  if(i <= 0 || i > 59 ) return 0;
+  tm.tm_min = i;
+
+  while(*s != ':' && *s != '\0') s++;
+  if(*s == '\0') return mktime(&tm);
+  s++;
+  i = atoi(s);
+  if(i <= 0 || i > 59 ) return 0;
+  tm.tm_sec = i;
+  
+  return mktime(&tm);
 }
-#define T_MAX_CHAR 17u
-#define T_MIN_CHAR 8u // DD/MM/YY or 
-#define MIN_DATE 1231110000 // 1er Jan 2009, you probably have no crypto back then.
+
+
 /**
  * @brief Convert a string to a timestamp.
  *  The string could be DD/MM/YY-HH:MM:SS format or a real timestamp (64 bit number) but in str.
@@ -75,10 +100,10 @@ static time_t timeformat(char * s){
     bool b_err = false;
     size_t s_size = strlen(s);
     time_t t;
-    printf("timeformat entry : %s \n", s );
+
     // Need to separate real timestamp and date formated DD/MM/YY-HH:MM:SS
     if(s_size > T_MAX_CHAR || s_size < T_MIN_CHAR){
-      b_err = true;
+      return 0;
     }
     // Determine if it’s a Timestamp or a string.
     bool s_is_just_a_bunch_of_digits = true;
@@ -89,27 +114,31 @@ static time_t timeformat(char * s){
       t = atoll(s);
     }
     else{
-      struct tm tm;
       // @todo : have to creat strptime…
-      if ( strptime(s, "%Y/%m/%d-%H:%M:%S", &tm) != NULL ) t = mktime(&tm);
+      t = str2time(s);
     }
-    if(b_err){
-      printf("ERROR in time format (-d) please use :\n  - Timestamp number\n  - dateformat: DD/MM/YY-HH:MM:SS\nNote: dateformat could stop at years\n");
-      return 0;
-    }
-    printf("time - %ld \n",t);
     return t;
 }
 
 static option  options_manager(int argc, char** argv){
   int opt;
   option o = option_default;
+  bool b_err = false;
   while( (opt = getopt(argc,argv,"d:i:t:f:")) != -1){
     switch(opt){
        case 'd' :
            o.timestamp = timeformat(optarg);
+           printf("[DEBUG]Time decoded : %ld\n", o.timestamp);
+           if(o.timestamp == 0){
+            b_err = true;
+            printf("Error in time format\n");
+           }
            break;
            } 
+  }
+  if(b_err){
+    printf("Fatal error - exit\n");
+    exit(1);
   }
   return o;
 }
