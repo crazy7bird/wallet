@@ -7,6 +7,8 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+#include "inc/dictionary.h"
+
 #define T_MAX_CHAR 17u
 #define T_MIN_CHAR 8u // DD/MM/YY or 
 #define MIN_DATE 1231110000 // 1er Jan 2009, you probably have no crypto back then.
@@ -126,15 +128,63 @@ static option  options_manager(int argc, char** argv){
   bool b_err = false;
   while( (opt = getopt(argc,argv,"d:i:t:f:")) != -1){
     switch(opt){
-       case 'd' :
-           o.timestamp = timeformat(optarg);
-           printf("[DEBUG]Time decoded : %ld\n", o.timestamp);
-           if(o.timestamp == 0){
+      case 'd' :
+        o.timestamp = timeformat(optarg);
+        printf("[DEBUG]Time decoded : %ld\n", o.timestamp);
+        if(o.timestamp == 0){
+          b_err = true;
+          printf("Error in time format\n");
+        }
+          o.d_flag = true;
+          break;
+      case 'i' :
+        o.ID = dictionary_get_ID(optarg);
+        printf("[DEBUG]ID obtained from %s : %d\n",optarg,o.ID);
+        if(o.ID == 255){
+          b_err = true;
+          printf("Error bad ID found\n");
+          printf("dictionnary contains :\n");
+          dictionary_print();
+        }
+        o.id_flag = true;
+        break;
+      case 't' :
+        {
+        char * index = optarg;
+        while(*index != '\0'){
+          if(isdigit(*index)|| *index == '.'){
+            index++;
+          }
+          else{
             b_err = true;
-            printf("Error in time format\n");
-           }
-           break;
-           } 
+            printf("Error token should be a number\n");
+            break;
+          }
+        }
+        o.token_flag = atof(optarg);
+        printf("Token amount : %.8lf\n", o.token_flag);
+        o.t_flag = true;
+        break;
+        }
+      case 'f':
+      {
+        char * index = optarg;
+        while(*index != '\0'){
+          if(isdigit(*index)|| *index == '.'){
+            index++;
+          }
+          else{
+            b_err = true;
+            printf("Error fiat should be a number\n");
+            break;
+          }
+        }
+        o.fiat_flag = atof(optarg);
+        printf("Fiat amount : %.2lf\n", o.fiat_flag);
+        o.f_flag = true;
+        break;
+      } 
+    } 
   }
   if(b_err){
     printf("Fatal error - exit\n");
@@ -144,6 +194,9 @@ static option  options_manager(int argc, char** argv){
 }
 
 int main(int argc, char** argv){
+
+  // Init dictionary
+  dictionary_load();
 
   option o = options_manager(argc, argv);
 
