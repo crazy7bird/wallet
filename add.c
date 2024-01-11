@@ -200,6 +200,20 @@ int main(int argc, char** argv){
 
   option o = options_manager(argc, argv);
 
+  // to do validations 
+  printf("Would you like to store this transaction : \n");
+  {
+    char date[25] = {'\0'};
+    struct tm * tm;
+    tm = localtime(&o.timestamp);
+    tm->tm_isdst = 0; // Else it remove 1H for daysaving time.
+    strftime(date,25, "%d/%m/y-%H:%M:%S",tm);
+    printf("  Timestamp : %ld (%s)\n", o.timestamp, date);
+  }
+  // @todo add get_token to dictionary.
+  //printf("  Token : %s, %s, %s\n", )
+
+
   //printf("Options : %d %s %s %s %.3s %d\n",o.update_flag,o.id_flag,o.symbol_flag,o.name_flag,o.order,o.all_flag);
   //return 0;
   printf("hello from add\n");
