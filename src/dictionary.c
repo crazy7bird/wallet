@@ -64,6 +64,15 @@ int dictionary_get_ID(char * token){
   return -1;
 }
 
+st_token * dictionary_get_token(uint8_t ID){
+  if(ID < gl_dic.size){
+    return &gl_dic.entry[ID];
+  }
+  return NULL;
+  // Branchless programing for fun
+  // return gl_dic.entry[ID] *( ID < gl_dic.size );
+}
+
 static void clearLine(char *LINE){
   for(int i =0; i<DICT_MAX_CHAR; i++)LINE[i] = '\0';
 }

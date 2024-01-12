@@ -208,10 +208,18 @@ int main(int argc, char** argv){
     tm = localtime(&o.timestamp);
     tm->tm_isdst = 0; // Else it remove 1H for daysaving time.
     strftime(date,25, "%d/%m/y-%H:%M:%S",tm);
-    printf("  Timestamp : %ld (%s)\n", o.timestamp, date);
+    printf("  Timestamp \t: %ld (%s)\n", o.timestamp, date);
   }
-  // @todo add get_token to dictionary.
-  //printf("  Token : %s, %s, %s\n", )
+  {
+    st_token * t = dictionary_get_token(o.ID);
+    if(t != NULL){
+      printf("  Token \t: %s, %s, %s\n",t->token_id,t->token_symbol, t->token_name);
+      printf("  Amount \t: %lf %s\n", o.token_flag,t->token_symbol);
+      printf("  Fiat   \t: %lf €\n", o.token_flag);
+    }
+  }
+
+
 
 
   //printf("Options : %d %s %s %s %.3s %d\n",o.update_flag,o.id_flag,o.symbol_flag,o.name_flag,o.order,o.all_flag);

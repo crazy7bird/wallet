@@ -29,6 +29,7 @@ struct st_dictionary {
 
 int dictionary_add_token(st_token * new_token);
 int dictionary_get_ID(char * token);
+st_token * dictionary_get_token(uint8_t ID);
 int dictionary_load();
 void dictionary_print();
 void dictionary_price_update();
