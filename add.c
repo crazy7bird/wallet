@@ -187,8 +187,8 @@ static option  options_manager(int argc, char** argv){
     } 
   }
   if(b_err){
-    printf("Fatal error - exit\n");
-    exit(1);
+    //printf("Fatal error - exit\n");
+    //exit(1);
   }
   return o;
 }
@@ -209,21 +209,42 @@ int main(int argc, char** argv){
     tm->tm_isdst = 0; // Else it remove 1H for daysaving time.
     strftime(date,25, "%d/%m/y-%H:%M:%S",tm);
     printf("  Timestamp \t: %ld (%s)\n", o.timestamp, date);
-  }
-  {
     st_token * t = dictionary_get_token(o.ID);
     if(t != NULL){
       printf("  Token \t: %s, %s, %s\n",t->token_id,t->token_symbol, t->token_name);
-      printf("  Amount \t: %lf %s\n", o.token_flag,t->token_symbol);
-      printf("  Fiat   \t: %lf €\n", o.token_flag);
     }
+    else{
+      printf("  Token \t: unknow (-s to show dictionary entries)\n");
+    }
+      printf("  Amount \t: %lf ", o.token_flag);
+      if(t != NULL){
+        printf("%s\n", t->token_symbol);
+      }
+      else{
+        printf("unknow\n");
+      }
+      printf("  Fiat   \t: %lf €\n", o.token_flag);
   }
+  char resp[4];
+  printf("You can correct (using -X arg) or use Yes (y) No (n) to saves or exit: ");
+  scanf("%3s", resp);
+  if(resp[0] == 'N' || resp[0] == 'n') exit(0);
+  // @note :
+  /**
+      enum { kMaxArgs = 64 };
+      int argc = 0;
+      char *argv[kMaxArgs];
 
+      char *p2 = strtok(commandLine, " ");
+      while (p2 && argc < kMaxArgs-1)
+        {
+          argv[argc++] = p2;
+          p2 = strtok(0, " ");
+        }
+      argv[argc] = 0;
+   */
 
-
-
-  //printf("Options : %d %s %s %s %.3s %d\n",o.update_flag,o.id_flag,o.symbol_flag,o.name_flag,o.order,o.all_flag);
-  //return 0;
-  printf("hello from add\n");
+  printf("bye from add\n");
+  return 0;
   
 }
