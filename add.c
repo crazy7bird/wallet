@@ -27,6 +27,15 @@ struct option{
 }option_default = {0,false,255,false,0,false,0,false};
 typedef struct option option;
 
+
+/**
+ * @brief help when -h is given.
+ * 
+ */
+static void print_help(void){
+  printf("add prog help user adding a transaction\n");
+  printf("-d for setting the date (use NOW for setting at current time)\n");
+}
 /**
 * @brief convert str format DD/MM/YY-HH:mm:ss to timestamp.
 * @return timestamp or 0 if error.
@@ -99,9 +108,12 @@ static time_t str2time(char *s){
  * @return time_t timestamp decoded.
  */
 static time_t timeformat(char * s){
-    bool b_err = false;
     size_t s_size = strlen(s);
     time_t t;
+
+    if(strcmp(s, "NOW") == 0){
+      return time(NULL);
+    }
 
     // Need to separate real timestamp and date formated DD/MM/YY-HH:MM:SS
     if(s_size > T_MAX_CHAR || s_size < T_MIN_CHAR){
@@ -124,30 +136,27 @@ static time_t timeformat(char * s){
 
 static void  options_manager(int argc, char** argv, option *o){
   int opt;
-  bool b_err = false;
   optind = 1; //Reset the index for getopt
-  while( (opt = getopt(argc,argv,"d:i:t:f:s")) != -1){
+  while( (opt = getopt(argc,argv,"d:i:t:f:sh")) != -1){
     switch(opt){
+      case 'h' :
+        print_help();
+        break;
       case 's' :
+        printf("Dictionary contains : \n");
         dictionary_print();
         break;
       case 'd' :
         o->timestamp = timeformat(optarg);
-        printf("[DEBUG]Time decoded : %ld\n", o->timestamp);
         if(o->timestamp == 0){
-          b_err = true;
-          printf("Error in time format\n");
+          printf("ERROR in time format\n");
         }
           o->d_flag = true;
           break;
       case 'i' :
         o->ID = dictionary_get_ID(optarg);
-        printf("[DEBUG]ID obtained from %s : %d\n",optarg,o->ID);
         if(o->ID == 255){
-          b_err = true;
-          printf("Error bad ID found\n");
-          printf("dictionnary contains :\n");
-          dictionary_print();
+          printf("ERROR bad ID\n");
         }
         o->id_flag = true;
         break;
@@ -159,8 +168,7 @@ static void  options_manager(int argc, char** argv, option *o){
             index++;
           }
           else{
-            b_err = true;
-            printf("Error token should be a number\n");
+            printf("ERROR token should be a number\n");
             break;
           }
         }
@@ -177,8 +185,7 @@ static void  options_manager(int argc, char** argv, option *o){
             index++;
           }
           else{
-            b_err = true;
-            printf("Error fiat should be a number\n");
+            printf("ERROR fiat should be a number\n");
             break;
           }
         }
@@ -188,10 +195,6 @@ static void  options_manager(int argc, char** argv, option *o){
         break;
       } 
     } 
-  }
-  if(b_err){
-    //printf("Fatal error - exit\n");
-    //exit(1);
   }
 }
 
