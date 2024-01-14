@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 #include "inc/dictionary.h"
+#include "inc/transaction.h"
 
 #define T_MAX_CHAR 17u
 #define T_MIN_CHAR 8u // DD/MM/YY or 
@@ -240,8 +241,15 @@ int main(int argc, char** argv){
     //scanf("%100s", resp);
     if(resp[0] == 'N' || resp[0] == 'n') return 0;
     if(resp[0] == 'Y' || resp[0] == 'y'){
-      // @todo save here the transaction then exit;
-      return 0;
+      if( o.d_flag &&
+          o.f_flag &&
+          o.id_flag &&
+          o.t_flag ){
+            st_transaction t = {o.d_flag, o.id_flag, o.t_flag, o.f_flag};
+            transaction_save(t);
+            return 0;
+          }
+      printf("Transactions datas are not corrects\n");
     }
     // Construct a new argc argv.
     #define MAX_ARGS 10 //Arbitrairy value.
