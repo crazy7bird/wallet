@@ -122,31 +122,34 @@ static time_t timeformat(char * s){
     return t;
 }
 
-static option  options_manager(int argc, char** argv){
+static void  options_manager(int argc, char** argv, option *o){
   int opt;
-  option o = option_default;
   bool b_err = false;
-  while( (opt = getopt(argc,argv,"d:i:t:f:")) != -1){
+  optind = 1; //Reset the index for getopt
+  while( (opt = getopt(argc,argv,"d:i:t:f:s")) != -1){
     switch(opt){
+      case 's' :
+        dictionary_print();
+        break;
       case 'd' :
-        o.timestamp = timeformat(optarg);
-        printf("[DEBUG]Time decoded : %ld\n", o.timestamp);
-        if(o.timestamp == 0){
+        o->timestamp = timeformat(optarg);
+        printf("[DEBUG]Time decoded : %ld\n", o->timestamp);
+        if(o->timestamp == 0){
           b_err = true;
           printf("Error in time format\n");
         }
-          o.d_flag = true;
+          o->d_flag = true;
           break;
       case 'i' :
-        o.ID = dictionary_get_ID(optarg);
-        printf("[DEBUG]ID obtained from %s : %d\n",optarg,o.ID);
-        if(o.ID == 255){
+        o->ID = dictionary_get_ID(optarg);
+        printf("[DEBUG]ID obtained from %s : %d\n",optarg,o->ID);
+        if(o->ID == 255){
           b_err = true;
           printf("Error bad ID found\n");
           printf("dictionnary contains :\n");
           dictionary_print();
         }
-        o.id_flag = true;
+        o->id_flag = true;
         break;
       case 't' :
         {
@@ -161,9 +164,9 @@ static option  options_manager(int argc, char** argv){
             break;
           }
         }
-        o.token_flag = atof(optarg);
-        printf("Token amount : %.8lf\n", o.token_flag);
-        o.t_flag = true;
+        o->token_flag = atof(optarg);
+        printf("Token amount : %.8lf\n", o->token_flag);
+        o->t_flag = true;
         break;
         }
       case 'f':
@@ -179,9 +182,9 @@ static option  options_manager(int argc, char** argv){
             break;
           }
         }
-        o.fiat_flag = atof(optarg);
-        printf("Fiat amount : %.2lf\n", o.fiat_flag);
-        o.f_flag = true;
+        o->fiat_flag = atof(optarg);
+        printf("Fiat amount : %.2lf\n", o->fiat_flag);
+        o->f_flag = true;
         break;
       } 
     } 
@@ -190,15 +193,14 @@ static option  options_manager(int argc, char** argv){
     //printf("Fatal error - exit\n");
     //exit(1);
   }
-  return o;
 }
 
 int main(int argc, char** argv){
 
   // Init dictionary
   dictionary_load();
-
-  option o = options_manager(argc, argv);
+  option o = option_default;
+  options_manager(argc, argv,&o);
   while(1){
     // to do validations 
     printf("Would you like to store this transaction : \n");
@@ -208,25 +210,25 @@ int main(int argc, char** argv){
       tm = localtime(&o.timestamp);
       tm->tm_isdst = 0; // Else it remove 1H for daysaving time.
       strftime(date,25, "%d/%m/%y-%H:%M:%S",tm);
-      printf("  Timestamp \t: %ld (%s)\n", o.timestamp, date);
+      printf("  (-d)Timestamp\t: %ld (%s)\n", o.timestamp, date);
       st_token * t = dictionary_get_token(o.ID);
       if(t != NULL){
-        printf("  Token \t: %s, %s, %s\n",t->token_id,t->token_symbol, t->token_name);
+        printf("  (-i)Token \t: %s, %s, %s\n",t->token_id,t->token_symbol, t->token_name);
       }
       else{
-        printf("  Token \t: unknow (-s to show dictionary entries)\n");
+        printf("  (-i)Token \t: unknow (-s to show dictionary entries)\n");
       }
-        printf("  Amount \t: %lf ", o.token_flag);
+        printf("  (-t)Amount \t: %lf ", o.token_flag);
         if(t != NULL){
           printf("%s\n", t->token_symbol);
         }
         else{
           printf("unknow\n");
         }
-        printf("  Fiat   \t: %lf €\n", o.fiat_flag);
+        printf("  (-f)Fiat   \t: %lf €\n", o.fiat_flag);
     }
     char resp[100]={'\0'};
-    printf("You can correct (using -X arg) or use Yes (y) No (n) to saves or exit: ");
+    printf("You can correct (using -X arg) or use Yes (y) No (n) to saves or exit:\n");
     //ScanF not working for spaced string.
     fgets(resp, 100, stdin);
     resp[strlen(resp) - 1] = '\0'; // remove extra \n
@@ -247,26 +249,8 @@ int main(int argc, char** argv){
       ptr = strtok(0," ");
     }
     v[c] = 0;
-    for(int i = 0; i<MAX_ARGS; i++){
-      printf("ARG[%d] : %s\n", i,v[i]);
-    }
-    o = options_manager(c,v);
+    options_manager(c,v,&o);
   }
-
-  // @note :
-  /**
-      enum { kMaxArgs = 64 };
-      int argc = 0;
-      char *argv[kMaxArgs];
-
-      char *p2 = strtok(commandLine, " ");
-      while (p2 && argc < kMaxArgs-1)
-        {
-          argv[argc++] = p2;
-          p2 = strtok(0, " ");
-        }
-      argv[argc] = 0;
-   */
 
   printf("bye from add\n");
   return 0;
