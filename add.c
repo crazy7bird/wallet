@@ -24,7 +24,7 @@ struct option{
   bool t_flag;
   double fiat_flag;  // -f for fiat
   bool f_flag;
-}option_default = {0,false,0,false,0,false,0,false};
+}option_default = {0,false,255,false,0,false,0,false};
 typedef struct option option;
 
 /**
@@ -199,36 +199,60 @@ int main(int argc, char** argv){
   dictionary_load();
 
   option o = options_manager(argc, argv);
-
-  // to do validations 
-  printf("Would you like to store this transaction : \n");
-  {
-    char date[25] = {'\0'};
-    struct tm * tm;
-    tm = localtime(&o.timestamp);
-    tm->tm_isdst = 0; // Else it remove 1H for daysaving time.
-    strftime(date,25, "%d/%m/y-%H:%M:%S",tm);
-    printf("  Timestamp \t: %ld (%s)\n", o.timestamp, date);
-    st_token * t = dictionary_get_token(o.ID);
-    if(t != NULL){
-      printf("  Token \t: %s, %s, %s\n",t->token_id,t->token_symbol, t->token_name);
-    }
-    else{
-      printf("  Token \t: unknow (-s to show dictionary entries)\n");
-    }
-      printf("  Amount \t: %lf ", o.token_flag);
+  while(1){
+    // to do validations 
+    printf("Would you like to store this transaction : \n");
+    {
+      char date[25] = {'\0'};
+      struct tm * tm;
+      tm = localtime(&o.timestamp);
+      tm->tm_isdst = 0; // Else it remove 1H for daysaving time.
+      strftime(date,25, "%d/%m/%y-%H:%M:%S",tm);
+      printf("  Timestamp \t: %ld (%s)\n", o.timestamp, date);
+      st_token * t = dictionary_get_token(o.ID);
       if(t != NULL){
-        printf("%s\n", t->token_symbol);
+        printf("  Token \t: %s, %s, %s\n",t->token_id,t->token_symbol, t->token_name);
       }
       else{
-        printf("unknow\n");
+        printf("  Token \t: unknow (-s to show dictionary entries)\n");
       }
-      printf("  Fiat   \t: %lf €\n", o.token_flag);
+        printf("  Amount \t: %lf ", o.token_flag);
+        if(t != NULL){
+          printf("%s\n", t->token_symbol);
+        }
+        else{
+          printf("unknow\n");
+        }
+        printf("  Fiat   \t: %lf €\n", o.fiat_flag);
+    }
+    char resp[100]={'\0'};
+    printf("You can correct (using -X arg) or use Yes (y) No (n) to saves or exit: ");
+    //ScanF not working for spaced string.
+    fgets(resp, 100, stdin);
+    resp[strlen(resp) - 1] = '\0'; // remove extra \n
+    //scanf("%100s", resp);
+    if(resp[0] == 'N' || resp[0] == 'n') return 0;
+    if(resp[0] == 'Y' || resp[0] == 'y'){
+      // @todo save here the transaction then exit;
+      return 0;
+    }
+    // Construct a new argc argv.
+    #define MAX_ARGS 10 //Arbitrairy value.
+    int c = 1; // Argv 0 contain progname.
+    char *v[MAX_ARGS];// = {"add.c"};
+    char * ptr = strtok(resp, " ");
+    while (ptr && c < MAX_ARGS-1){
+      v[c] = ptr;
+      c = c+1;
+      ptr = strtok(0," ");
+    }
+    v[c] = 0;
+    for(int i = 0; i<MAX_ARGS; i++){
+      printf("ARG[%d] : %s\n", i,v[i]);
+    }
+    o = options_manager(c,v);
   }
-  char resp[4];
-  printf("You can correct (using -X arg) or use Yes (y) No (n) to saves or exit: ");
-  scanf("%3s", resp);
-  if(resp[0] == 'N' || resp[0] == 'n') exit(0);
+
   // @note :
   /**
       enum { kMaxArgs = 64 };
