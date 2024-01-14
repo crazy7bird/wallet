@@ -151,14 +151,18 @@ static void  options_manager(int argc, char** argv, option *o){
         if(o->timestamp == 0){
           printf("ERROR in time format\n");
         }
+        else{
           o->d_flag = true;
-          break;
+        } 
+        break;
       case 'i' :
         o->ID = dictionary_get_ID(optarg);
         if(o->ID == 255){
           printf("ERROR bad ID\n");
         }
-        o->id_flag = true;
+        else {
+          o->id_flag = true;
+        }
         break;
       case 't' :
         {
@@ -173,7 +177,6 @@ static void  options_manager(int argc, char** argv, option *o){
           }
         }
         o->token_flag = atof(optarg);
-        printf("Token amount : %.8lf\n", o->token_flag);
         o->t_flag = true;
         break;
         }
@@ -190,7 +193,6 @@ static void  options_manager(int argc, char** argv, option *o){
           }
         }
         o->fiat_flag = atof(optarg);
-        printf("Fiat amount : %.2lf\n", o->fiat_flag);
         o->f_flag = true;
         break;
       } 
