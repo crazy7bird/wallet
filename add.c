@@ -245,7 +245,8 @@ int main(int argc, char** argv){
           o.f_flag &&
           o.id_flag &&
           o.t_flag ){
-            st_transaction t = {o.d_flag, o.id_flag, o.t_flag, o.f_flag};
+            st_transaction t = {o.timestamp, o.ID, o.token_flag, o.fiat_flag};
+            transaction_print(t);
             transaction_save(t);
             return 0;
           }
