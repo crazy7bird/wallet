@@ -204,7 +204,7 @@ static void  options_manager(int argc, char** argv, option *o){
 int main(int argc, char** argv){
 
   // Init dictionary
-  dictionary_load();
+  //dictionary_load();
   option o = option_default;
   options_manager(argc, argv,&o);
   while(1){

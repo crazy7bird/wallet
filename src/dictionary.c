@@ -4,12 +4,26 @@
 #include <string.h>
 #include <stdbool.h>
 #include "gecko_api.h"
+#include <stdbool.h>
 
 // Temporary defineds :
 #define FILE_NAME "data/wallet.dic"
 
 
-st_dictionary gl_dic;
+st_dictionary gl_dic = {0,NULL};
+
+/**
+ * 
+ * @brief check if gl_dic is null;
+ * if so, autoload file then update price.
+ * @param bool priceUpdate lauch a price update
+ */
+static void dictionary_autoinit(){
+  if(gl_dic.size != 0) return;
+  dictionary_load();
+  dictionary_price_update();
+  return;
+}
 
 static int dictionary_file_append(st_token * new_token){
   // @todo : get name from a file system manager.
@@ -45,6 +59,7 @@ static int dictionary_load_token(st_token * new_token){
 }
 
 int dictionary_add_token(st_token * new_token){
+  dictionary_autoinit();
   // Check if tocken isn’t in the dictionary.
   if(dictionary_get_ID(new_token->token_id) != -1){
     printf("dictionary_add_token : error token already in dictionary\n");
@@ -56,6 +71,7 @@ int dictionary_add_token(st_token * new_token){
 }
 
 int dictionary_get_ID(char * token){
+  dictionary_autoinit();
   for(int i = 0u ; i < gl_dic.size ; i++){
     if(strcmp(token, gl_dic.entry[i].token_id) == 0u ||
        strcmp(token, gl_dic.entry[i].token_symbol) == 0u ||
@@ -65,6 +81,7 @@ int dictionary_get_ID(char * token){
 }
 
 st_token * dictionary_get_token(uint8_t ID){
+  dictionary_autoinit();
   if(ID < gl_dic.size){
     return &gl_dic.entry[ID];
   }
@@ -106,6 +123,7 @@ int dictionary_load(){
 }
 
 void dictionary_print(){
+  dictionary_autoinit();
   for(int i = 0; i < gl_dic.size ; i++ ){
     printf("ID : %d; Token : %s; %s; %s = %lf\n",i,
     gl_dic.entry[i].token_id,
